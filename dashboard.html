@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Kho dữ liệu bán hàng – Mekong Mobile L6</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+:root { --navy:#1a2744; --accent:#e67e22; --bg:#f0f2f5; --card:#fff; --muted:#6b7280; }
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:Segoe UI,system-ui,sans-serif; background:var(--bg); color:#1a1a2e; }
+header { background:linear-gradient(135deg,var(--navy),#2c3e6b); color:#fff; padding:18px 28px;
+  display:flex; justify-content:space-between; align-items:center; }
+header h1 { font-size:1.25rem; }
+header .sub { font-size:.82rem; opacity:.75; margin-top:3px; }
+.badge { background:var(--accent); padding:6px 14px; border-radius:20px; font-size:.78rem; font-weight:600; }
+.tabs { display:flex; gap:8px; padding:16px 20px 0; max-width:1200px; margin:0 auto; }
+.tab { padding:10px 18px; border-radius:8px 8px 0 0; background:#dde3ec; cursor:pointer; font-size:.9rem; font-weight:600; border:none; }
+.tab.active { background:var(--card); color:var(--navy); }
+.container { max-width:1200px; margin:0 auto; padding:0 20px 40px; }
+.panel { display:none; background:var(--card); border-radius:0 12px 12px 12px; padding:20px; box-shadow:0 1px 4px rgba(0,0,0,.06); }
+.panel.active { display:block; }
+.kpi-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:14px; margin-bottom:20px; }
+.kpi { background:#f8fafc; border-radius:10px; padding:14px 16px; border-left:4px solid var(--accent); }
+.kpi .label { font-size:.72rem; color:var(--muted); text-transform:uppercase; }
+.kpi .value { font-size:1.35rem; font-weight:700; color:var(--navy); margin-top:4px; }
+.charts { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+@media(max-width:800px){ .charts { grid-template-columns:1fr; } }
+.card { background:#f8fafc; border-radius:10px; padding:14px; }
+.card h3 { font-size:.9rem; color:var(--navy); margin-bottom:4px; }
+.card .q { font-size:.75rem; color:var(--muted); margin-bottom:10px; }
+canvas { max-height:260px; }
+table { width:100%; border-collapse:collapse; font-size:.85rem; margin-top:12px; }
+th,td { padding:8px 10px; text-align:left; border-bottom:1px solid #e5e7eb; }
+th { background:var(--navy); color:#fff; }
+tr:nth-child(even) { background:#f1f5f9; }
+.top { background:#d1fae5 !important; }
+footer { text-align:center; padding:14px; font-size:.75rem; color:var(--muted); }
+.state-box { text-align:center; padding:50px; color:var(--muted); }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Kho dữ liệu bán hàng – Mekong Mobile</h1>
+   
+</header>
+
+<div class="tabs">
+  <button class="tab active" onclick="showPanel(0)">1. Tổng quan doanh thu</button>
+  <button class="tab" onclick="showPanel(1)">2. Sản phẩm & danh mục</button>
+  <button class="tab" onclick="showPanel(2)">3. Kênh bán & thanh toán</button>
+</div>
+
+<div class="container">
+  <div id="empty" class="state-box" style="display:none"><h2>Chưa có dữ liệu</h2><p>Chạy pipeline rồi tải lại trang.</p></div>
+
+  <!-- Màn 1: UC01 -->
+  <div class="panel active" id="p0">
+    <div class="kpi-row">
+      <div class="kpi"><div class="label">Doanh thu thuần</div><div class="value">6.60 tỷ</div></div>
+      <div class="kpi"><div class="label">Số đơn hàng</div><div class="value">429</div></div>
+      <div class="kpi"><div class="label">AOV</div><div class="value">15.4 tr</div></div>
+      <div class="kpi"><div class="label">LN gộp (27.71%)</div><div class="value">1.83 tỷ</div></div>
+    </div>
+    <div class="charts">
+      <div class="card">
+        <h3>Xu hướng doanh thu theo tháng</h3>
+        <div class="q">US1 / FR-01, FR-02 · Nguồn: fact_order_item + dim_date</div>
+        <canvas id="cMonth"></canvas>
+      </div>
+      <div class="card">
+        <h3>Top cửa hàng</h3>
+        <div class="q">So sánh doanh thu thuần theo cửa hàng</div>
+        <canvas id="cStore"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Màn 2: UC02 -->
+  <div class="panel" id="p1">
+    <div class="card">
+      <h3>Top 10 sản phẩm bán chạy</h3>
+      <div class="q">US2 / FR-03, FR-04 · fact_order_item JOIN dim_product</div>
+      <canvas id="cProd"></canvas>
+    </div>
+    <table>
+      <thead><tr><th>Mã SP</th><th>Tên SP</th><th>Danh mục</th><th>SL bán</th><th>Doanh thu</th><th>COGS</th><th>LN gộp</th></tr></thead>
+      <tbody>
+<tr class="top"><td>VV0167</td><td>vivo Pro+ 14</td><td>Điện thoại cao cấp</td><td>8</td><td>284,823,000</td><td>207,144,000</td><td>77,679,000</td></tr>
+<tr class="top"><td>SS0012</td><td>Samsung Pro Max 13</td><td>Điện thoại cao cấp</td><td>10</td><td>263,106,000</td><td>195,930,000</td><td>67,176,000</td></tr>
+<tr class="top"><td>VV0200</td><td>vivo Pro Max 16</td><td>Điện thoại cao cấp</td><td>6</td><td>166,540,500</td><td>117,558,000</td><td>48,982,500</td></tr>
+<tr><td>NK0251</td><td>Nokia Ultra 16</td><td>Điện thoại cao cấp</td><td>6</td><td>162,342,000</td><td>117,558,000</td><td>44,784,000</td></tr>
+<tr><td>TC0309</td><td>TECNO Ultra 16</td><td>Điện thoại cao cấp</td><td>4</td><td>147,960,000</td><td>103,572,000</td><td>44,388,000</td></tr>
+<tr><td>VV0182</td><td>vivo Pro Max 12</td><td>Điện thoại cao cấp</td><td>4</td><td>136,863,000</td><td>103,572,000</td><td>33,291,000</td></tr>
+<tr><td>NK0244</td><td>Nokia Pro Max 16</td><td>Điện thoại cao cấp</td><td>4</td><td>124,761,000</td><td>89,572,000</td><td>35,189,000</td></tr>
+<tr><td>SS0039</td><td>Samsung Pro+ 15</td><td>Điện thoại cao cấp</td><td>4</td><td>124,761,000</td><td>89,572,000</td><td>35,189,000</td></tr>
+<tr><td>OP0104</td><td>OPPO Pro+ 12</td><td>Điện thoại cao cấp</td><td>6</td><td>105,394,500</td><td>79,758,000</td><td>25,636,500</td></tr>
+<tr><td>SS0038</td><td>Samsung Note 8</td><td>Điện thoại tầm trung</td><td>9</td><td>101,915,000</td><td>75,537,000</td><td>26,378,000</td></tr>
+
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Màn 3: UC05 -->
+  <div class="panel" id="p2">
+    <div class="charts">
+      <div class="card">
+        <h3>Tỷ trọng theo kênh bán</h3>
+        <div class="q">US5 / FR-08 · fact_order_item JOIN dim_channel</div>
+        <canvas id="cCh"></canvas>
+      </div>
+      <div class="card">
+        <h3>Doanh thu theo phương thức TT</h3>
+        <div class="q">US5 / FR-09 · fact_order_item JOIN dim_payment</div>
+        <canvas id="cPay"></canvas>
+      </div>
+    </div>
+    <table>
+      <thead><tr><th>Phương thức</th><th>Số đơn</th><th>Doanh thu thực thu</th></tr></thead>
+      <tbody>
+<tr><td>COD</td><td>352</td><td>5,368,289,000</td></tr>
+<tr><td>Trả góp</td><td>77</td><td>1,229,860,000</td></tr>
+
+      </tbody>
+    </table>
+  </div>
+</div>
+<footer>Chuyên đề tốt nghiệp 1 · Văn Lang · Khoa CNTT · GitHub: cloudyblue10/smart-crm · Tag v0.2</footer>
+<script>
+const DATA = {"month_labels": ["2024-07", "2024-08", "2024-09", "2024-10", "2024-11", "2024-12", "2025-01", "2025-02", "2025-03", "2025-04", "2025-05", "2025-06", "2025-07", "2025-08", "2025-09", "2025-10", "2025-11", "2025-12", "2026-01", "2026-02", "2026-03", "2026-04", "2026-05", "2026-06", "2026-07", "2026-08"], "month_rev": [0.116, 0.292, 0.376, 0.288, 0.285, 0.33, 0.28, 0.346, 0.207, 0.248, 0.256, 0.269, 0.175, 0.274, 0.259, 0.274, 0.402, 0.328, 0.425, 0.225, 0.15, 0.165, 0.077, 0.14, 0.129, 0.283], "month_orders": [17, 17, 19, 20, 16, 14, 15, 10, 15, 14, 19, 16, 14, 17, 19, 16, 26, 24, 24, 14, 15, 15, 5, 11, 16, 21], "store_labels": ["Mekong Mobile Quận Bình Thạnh", "Mekong Mobile Quận 12", "Mekong Mobile Đống Đa", "Mekong Mobile Quận 3", "Mekong Mobile Cầu Giấy", "Mekong Mobile Phong Điền", "Mekong Mobile Quận Tân Phú", "Mekong Mobile Quận Bình Tân", "Mekong Mobile Thốt Nốt", "Mekong Mobile Quận Phú Nhuận"], "store_values": [0.313, 0.319, 0.326, 0.326, 0.344, 0.347, 0.375, 0.385, 0.464, 0.504], "prod_labels": ["Samsung Note 8", "OPPO Pro+ 12", "Samsung Pro+ 15", "Nokia Pro Max 16", "vivo Pro Max 12", "TECNO Ultra 16", "Nokia Ultra 16", "vivo Pro Max 16", "Samsung Pro Max 13", "vivo Pro+ 14"], "prod_values": [0.102, 0.105, 0.125, 0.125, 0.137, 0.148, 0.162, 0.167, 0.263, 0.285], "ch_labels": ["POS"], "ch_values": [6.598], "pay_labels": ["COD", "Trả góp"], "pay_values": [5.368, 1.23], "state": "ok"};
+function showPanel(i) {
+  document.querySelectorAll('.panel').forEach((p,idx)=>p.classList.toggle('active', idx===i));
+  document.querySelectorAll('.tab').forEach((t,idx)=>t.classList.toggle('active', idx===i));
+}
+function avg(a){ return a.length ? a.reduce((x,y)=>x+y,0)/a.length : 0; }
+if (DATA.state === 'empty') {
+  document.getElementById('empty').style.display='block';
+} else {
+  const m = avg(DATA.month_rev);
+  new Chart(document.getElementById('cMonth'), {
+    type:'bar',
+    data:{ labels:DATA.month_labels, datasets:[
+      { label:'DT thuần (tỷ)', data:DATA.month_rev, backgroundColor:'rgba(26,39,68,.75)', borderRadius:4 },
+      { label:'TB tháng', data:DATA.month_rev.map(()=>m), type:'line', borderColor:'#e67e22', borderDash:[6,4], pointRadius:0, fill:false }
+    ]},
+    options:{ responsive:true, scales:{ y:{ beginAtZero:true } } }
+  });
+  new Chart(document.getElementById('cStore'), {
+    type:'bar',
+    data:{ labels:DATA.store_labels, datasets:[{ data:DATA.store_values, backgroundColor:'rgba(16,185,129,.75)', borderRadius:4 }] },
+    options:{ indexAxis:'y', plugins:{ legend:{ display:false } }, scales:{ x:{ beginAtZero:true } } }
+  });
+  new Chart(document.getElementById('cProd'), {
+    type:'bar',
+    data:{ labels:DATA.prod_labels, datasets:[{ data:DATA.prod_values, backgroundColor:'rgba(59,130,246,.75)', borderRadius:4 }] },
+    options:{ indexAxis:'y', plugins:{ legend:{ display:false } }, scales:{ x:{ beginAtZero:true } } }
+  });
+  new Chart(document.getElementById('cCh'), {
+    type:'doughnut',
+    data:{ labels:DATA.ch_labels, datasets:[{ data:DATA.ch_values, backgroundColor:['#1a2744','#e67e22','#10b981','#3b82f6','#8b5cf6'] }] },
+    options:{ plugins:{ legend:{ position:'right' } } }
+  });
+  new Chart(document.getElementById('cPay'), {
+    type:'bar',
+    data:{ labels:DATA.pay_labels, datasets:[{ data:DATA.pay_values, backgroundColor:'rgba(230,126,34,.8)', borderRadius:4 }] },
+    options:{ plugins:{ legend:{ display:false } }, scales:{ y:{ beginAtZero:true } } }
+  });
+}
+</script>
+</body>
+</html>
