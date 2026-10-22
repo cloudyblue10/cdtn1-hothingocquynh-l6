@@ -1,0 +1,68 @@
+{
+  "run_at": "2026-10-22T09:34:49",
+  "use_sample": true,
+  "load": {
+    "dim_store": 24,
+    "dim_product": 320,
+    "dim_date": 334,
+    "dim_channel": 1,
+    "dim_payment": 2,
+    "fact_order_item": 563,
+    "reject_log": 71,
+    "quality_report": 6
+  },
+  "kpi": {
+    "tong_doanh_thu_thuan": 6598149000.0,
+    "tong_loi_nhuan_gop": 1828391000.0,
+    "ty_suat_ln_gop": 27.71,
+    "so_don": 429,
+    "aov": 15380300.699300699,
+    "so_cua_hang": 24,
+    "so_san_pham": 259,
+    "so_dong_fact": 563
+  },
+  "quality": [
+    {
+      "name": "null_rate",
+      "total_rows": 500,
+      "error_rows": 2,
+      "error_rate": 0.4,
+      "detail": "cột kiểm tra: order_id, ma_don, ma_cua_hang, ngay"
+    },
+    {
+      "name": "date_format",
+      "total_rows": 500,
+      "error_rows": 67,
+      "error_rate": 13.4,
+      "detail": "cột ngay"
+    },
+    {
+      "name": "money_positive",
+      "total_rows": 500,
+      "error_rows": 5,
+      "error_rate": 1.0,
+      "detail": "cột thanh_tien"
+    },
+    {
+      "name": "quantity_positive",
+      "total_rows": 800,
+      "error_rows": 0,
+      "error_rate": 0.0,
+      "detail": "cột so_luong"
+    },
+    {
+      "name": "line_amount_consistency",
+      "total_rows": 800,
+      "error_rows": 7,
+      "error_rate": 0.88,
+      "detail": "lệch > 1% so với so_luong × don_gia"
+    },
+    {
+      "name": "money_positive",
+      "total_rows": 800,
+      "error_rows": 0,
+      "error_rate": 0.0,
+      "detail": "cột don_gia"
+    }
+  ]
+}
