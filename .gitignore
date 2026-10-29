@@ -1,0 +1,24 @@
+# Bí mật & môi trường
+.env
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Dữ liệu lớn: KHÔNG commit (theo README bộ dữ liệu, mục 7)
+data/raw/
+*.csv
+!data/sample/*.csv
+!data/reference/*.csv
+
+# Sản phẩm sinh ra khi chạy
+warehouse/
+reports/
+*.sqlite
+
+# Hệ điều hành / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
