@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kho dữ liệu bán hàng · Mekong Mobile</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark" aria-hidden="true">MM</span>
+    <div>
+      <h1>Kho dữ liệu bán hàng &amp; báo cáo doanh thu</h1>
+      <p class="sub">Smart CRM · Mekong Mobile · Luồng L6 · Track DA</p>
+    </div>
+  </div>
+  <div class="source-badge" id="source-badge">Đang kiểm tra kho dữ liệu…</div>
+</header>
+
+<nav class="tabs" role="tablist" aria-label="Màn hình">
+  <button role="tab" class="tab active" data-screen="overview" aria-selected="true">1 · Tổng quan doanh thu</button>
+  <button role="tab" class="tab" data-screen="products" aria-selected="false">2 · Sản phẩm &amp; cửa hàng</button>
+  <button role="tab" class="tab" data-screen="payments" aria-selected="false">3 · Kênh &amp; thanh toán</button>
+  <button role="tab" class="tab" data-screen="quality" aria-selected="false">4 · Chất lượng dữ liệu</button>
+</nav>
+
+<!-- Thanh bộ lọc dùng chung (một hàng, phía trên mọi biểu đồ) -->
+<form class="filters" id="filters" autocomplete="off">
+  <label>Từ ngày <input type="date" name="from" id="f-from"></label>
+  <label>Đến ngày <input type="date" name="to" id="f-to"></label>
+  <div class="presets" role="group" aria-label="Khoảng nhanh">
+    <button type="button" data-preset="last_month">Tháng gần nhất</button>
+    <button type="button" data-preset="last_7">7 ngày cuối</button>
+    <button type="button" data-preset="last_90">90 ngày</button>
+    <button type="button" data-preset="all">Toàn bộ</button>
+  </div>
+  <label>Cửa hàng
+    <select name="store" id="f-store"><option value="">Tất cả</option></select>
+  </label>
+  <label>Danh mục
+    <select name="category" id="f-category"><option value="">Tất cả</option></select>
+  </label>
+  <button type="submit" class="btn primary">Áp dụng</button>
+  <a class="btn" id="export-btn" href="#" download>Xuất CSV</a>
+  <p class="filter-error" id="filter-error" role="alert" hidden></p>
+</form>
+
+<main id="screen" aria-live="polite"></main>
+
+<footer class="foot">
+  Dữ liệu mô phỏng của học phần Chuyên đề tốt nghiệp 1 — Trường Đại học Văn Lang.
+  Giá vốn là <strong>ước tính</strong> theo tỷ lệ nhóm sản phẩm (data/reference/ty_le_gia_von.csv).
+</footer>
+
+<script src="/static/js/format.js"></script>
+<script src="/static/js/api.js"></script>
+<script src="/static/js/states.js"></script>
+<script src="/static/js/charts.js"></script>
+<script src="/static/js/screens.js"></script>
+<script src="/static/js/app.js"></script>
+</body>
+</html>
