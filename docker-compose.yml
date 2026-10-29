@@ -1,0 +1,18 @@
+# Dựng toàn bộ hệ thống bằng MỘT lệnh:  docker compose up --build
+# Chạy lại riêng pipeline:            docker compose run --rm app python -m src.pipeline
+services:
+  app:
+    build: .
+    env_file:
+      - path: .env
+        required: false        # không có .env thì dùng giá trị mặc định trong src/config.py
+    environment:
+      API_HOST: 0.0.0.0
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data:ro    # đặt bộ đầy đủ vào data/raw rồi đổi DATA_DIR=data/raw trong .env
+      - dw:/app/warehouse      # kho được giữ giữa các lần khởi động
+      - ./reports:/app/reports
+volumes:
+  dw:

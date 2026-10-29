@@ -1,0 +1,30 @@
+flowchart LR
+  subgraph SRC["Nguồn (data/raw hoặc data/sample)"]
+    O[orders_2024_2026.csv]
+    I[order_items.csv]
+    P[products.csv]
+    S[stores.csv]
+    R[data/reference/<br/>ty_le_gia_von.csv<br/>vung_mien.csv]
+  end
+  subgraph ETL["Pipeline ETL — python -m src.pipeline"]
+    E["EXTRACT<br/>src/extract/extract.py<br/>đọc CSV → staging (chuỗi)<br/>kiểm lược đồ cột"]
+    Q["QUALITY<br/>src/quality/checks.py<br/>10 hàm CL01–CL10<br/>trả về số đo"]
+    T["TRANSFORM<br/>src/transform/<br/>rules.py · transform.py<br/>làm sạch, tính chỉ số"]
+    L["LOAD<br/>src/load/warehouse.py<br/>UPSERT theo khoá nghiệp vụ<br/>1 giao dịch"]
+  end
+  subgraph DW["Kho SQLite — warehouse/dw_mekong.sqlite"]
+    F[(fact_order_item)]
+    D[(dim_date · dim_store<br/>dim_product · dim_channel<br/>dim_payment)]
+    A[(agg_daily_store)]
+    J[(reject_records · fix_log<br/>quality_result · etl_run_log)]
+  end
+  subgraph SERVE["Dashboard — python -m src.serve.app"]
+    RP["REPOSITORY<br/>src/serve/repository.py<br/>SQL chỉ đọc"]
+    SV["SERVICE<br/>src/serve/service.py<br/>bộ lọc, so sánh kỳ trước"]
+    RT["ROUTES<br/>src/serve/app.py<br/>JSON + mã HTTP"]
+    UI["GIAO DIỆN<br/>static/js/api.js → screens.js<br/>4 màn hình · 3 trạng thái"]
+  end
+  O & I & P & S & R --> E --> T
+  Q -. được gọi bởi .-> T
+  T --> L --> F & D & A & J
+  F & D & A & J --> RP --> SV --> RT -->|HTTP /api/*| UI
